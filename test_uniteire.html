@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tests Unitaires - le système de gestion RH</title>
+</head>
+<body>
+  <h1>Résultats des Tests Unitaires :</h1>
+  <pre id="test-results"></pre>
+  <input type="text" id="ajout-nom">
+  <input type="text" id="ajout-poste">
+  <button onclick="ajouterEmployeManuel()">Ajouter</button>
+  <ul id="liste-employes" style="display:none;"></ul>
+  <!-- Inclure le code de l'application -->
+  <script src="app.js"></script>
+
+  <script>
+    // Fonction d'assertion simple
+    function assertEquals(actual, expected, testName) {
+      const results = document.getElementById('test-results');
+      if (actual === expected) {
+        results.textContent += `✔️ ${testName} : Réussi\n`;
+      } else {
+        results.textContent += `❌ ${testName} : Échoué\n   Attendu : ${expected}\n   Obtenu : ${actual}\n`;
+      }
+    }
+
+    // Tests pour addTask
+    function testAjouterEmploye() {
+      // Cas normal
+      let result = ajouterEmploye('4 - Lili - Développeur');
+      assertEquals(result, true, 'Test addTask avec une chaîne valide');
+
+      // Vérifier que la tâche est ajoutée
+      let taskList = document.getElementById('task-list');
+      let lastTask = taskList.lastElementChild;
+      assertEquals(lastTask.textContent.includes('Faire les courses'), true, 'Vérifier que la tâche est ajoutée');
+
+      // Cas chaîne vide
+      let result2 = addTask(null);
+      assertEquals(result2, false, 'Test addTask avec une chaîne vide');
+      // Vérifier que la tâche n'est pas ajoutée
+      assertEquals(taskList.children.length, 1, 'Vérifier qu\'aucune tâche n\'est ajoutée');
+
+      // Cas type invalide
+      let result3 = addTask(7);
+      assertEquals(result3, false, 'Test addTask avec un type invalide');
+      // Vérifier que la tâche n'est pas ajoutée
+      assertEquals(taskList.children.length, 1, 'Vérifier qu\'aucune tâche n\'est ajoutée');
+    }
+
+    // Tests pour toggleTask
+    function testToggleTask() {
+      // Ajouter une tâche pour le test
+      addTask('Faire les courses');
+      let taskList = document.getElementById('task-list');
+      let taskItem = taskList.lastElementChild;
+
+      // Simuler un clic pour marquer comme terminée
+      taskItem.dispatchEvent(new Event('click'));
+      assertEquals(taskItem.classList.contains('completed'), true, 'Test toggleTask pour marquer comme terminée');
+
+      // Simuler un autre clic pour démarquer
+      taskItem.dispatchEvent(new Event('click'));
+      assertEquals(taskItem.classList.contains('completed'), false, 'Test toggleTask pour démarquer');
+    }
+
+    // Tests pour deleteTask
+    function testDeleteTask() {
+      // Ajouter une tâche pour le test
+      addTask('Faire les courses');
+      let taskList = document.getElementById('task-list');
+      let taskItem = taskList.lastElementChild;
+
+      // Nombre de tâches avant suppression
+      let n = taskList.children.length;
+
+      // Simuler un clic sur le bouton de suppression
+      taskItem.querySelector('.delete-button').dispatchEvent(new Event('click'));
+      let n2 = taskList.children.length;
+      // Vérifier que la tâche a été supprimée
+      assertEquals(n-1, n2, 'Vérifier que la tâche a été supprimée');
+    }
+
+    // Exécution des tests
+    function runTests() {
+      testAddTask();
+      testToggleTask();
+      testDeleteTask();
+    }
+
+    runTests();
+  </script>
+</body>
+</html>
