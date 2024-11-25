@@ -1,0 +1,15 @@
+{
+  "name": "jenkins-selenium-test",
+  "version": "1.0.0",
+  "description": "Tests unitaires pour assurer la qualité du code.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "selenium-webdriver": "^4.26.0"
+  }
+}

@@ -7,92 +7,87 @@
 <body>
   <h1>Résultats des Tests Unitaires :</h1>
   <pre id="test-results"></pre>
-  <input type="text" id="ajout-nom">
-  <input type="text" id="ajout-poste">
+
+  <input type="text" id="ajout-nom" placeholder="Nom">
+  <input type="text" id="ajout-poste" placeholder="Poste">
   <button onclick="ajouterEmployeManuel()">Ajouter</button>
+
   <ul id="liste-employes" style="display:none;"></ul>
-  <!-- Inclure le code de l'application -->
+
   <script src="app.js"></script>
 
   <script>
     // Fonction d'assertion simple
     function assertEquals(actual, expected, testName) {
       const results = document.getElementById('test-results');
-      if (actual === expected) {
+      if (JSON.stringify(actual) === JSON.stringify(expected)) {
         results.textContent += `✔️ ${testName} : Réussi\n`;
       } else {
-        results.textContent += `❌ ${testName} : Échoué\n   Attendu : ${expected}\n   Obtenu : ${actual}\n`;
+        results.textContent += `❌ ${testName} : Échoué\n   Attendu : ${JSON.stringify(expected)}\n   Obtenu : ${JSON.stringify(actual)}\n`;
       }
     }
 
-    function testAjouterEmployeManuel(){
+    // Simulation des employés
+    const employes = [
+      { id: 1, nom: "Dupont", poste: "Développeur" },
+      { id: 2, nom: "Durand", poste: "Designer" }
+    ];
 
-    const nom = document.getElementById('ajout-nom').value;
-    const poste = document.getElementById('ajout-poste').value;
-    const id = employes.length > 0 ? employes[employes.length - 1].id + 1 : 1;
-    if (nom && poste) {
+    // Fonction pour afficher les employés
+    function afficherEmployes() {
+      const listeDiv = document.getElementById('liste-employes');
+      listeDiv.innerHTML = '';
+      employes.forEach(emp => {
+        const empDiv = document.createElement('li');
+        empDiv.textContent = `${emp.id} - ${emp.nom} - ${emp.poste}`;
+        listeDiv.appendChild(empDiv);
+      });
+      listeDiv.style.display = 'block';
+    }
+
+    // Ajouter un employé
+    function ajouterEmploye(id, nom, poste) {
+      employes.push({ id, nom, poste });
+    }
+
+    // Fonction pour ajouter un employé via l'interface
+    function ajouterEmployeManuel() {
+      const nom = document.getElementById('ajout-nom').value;
+      const poste = document.getElementById('ajout-poste').value;
+      const id = employes.length > 0 ? employes[employes.length - 1].id + 1 : 1;
+      if (nom && poste) {
         ajouterEmploye(id, nom, poste);
         afficherEmployes();
-    }
-      let result = ajouterEmploye(4,'Lili','Développeur');
-      assertEquals(result, {id: 4, nom: "Lili", poste: "Développeur"}, 'employe ajouter');
-
-      let listeEmployes = document.getElementById('liste-employes');
-      let lastEmploye= listeEmployes.lastElementChild;
-      assertEquals(astEmploye.textContent.contains({id: 4, nom: "Lili", poste: "Développeur"}), true, 'Vérifier que employe est ajoutée');
+      }
     }
 
-
-
+    // Test unitaire pour ajouter un employé
     function testAjouterEmploye() {
-
-      let result = ajouterEmploye(4,'Lili','Développeur');
-      assertEquals(result, {id: 4, nom: "Lili", poste: "Développeur"}, 'employe ajouter');
-      employeLast=result.forEach(e => {e.id === 4 && e.nom === 'Lili' && e.poste === 'Développeur'
-});
-      assertEquals(employeLast, true, 'Vérifier que employe est ajoutée');
+      ajouterEmploye(4, 'Lili', 'Développeur');
+      const lastEmploye = employes[employes.length - 1];
+      assertEquals(lastEmploye, { id: 4, nom: 'Lili', poste: 'Développeur' }, 'Vérifier l\'ajout d\'un employé');
     }
 
-    // Tests pour toggleTask
-    function testToggleTask() {
-      // Ajouter une tâche pour le test
-      addTask('Faire les courses');
-      let taskList = document.getElementById('task-list');
-      let taskItem = taskList.lastElementChild;
+    // Test unitaire pour vérifier l'affichage dans l'interface
+    function testAjouterEmployeManuel() {
+      // Simuler l'ajout via l'interface
+      document.getElementById('ajout-nom').value = 'Lili';
+      document.getElementById('ajout-poste').value = 'Développeur';
+      ajouterEmployeManuel();
 
-      // Simuler un clic pour marquer comme terminée
-      taskItem.dispatchEvent(new Event('click'));
-      assertEquals(taskItem.classList.contains('completed'), true, 'Test toggleTask pour marquer comme terminée');
-
-      // Simuler un autre clic pour démarquer
-      taskItem.dispatchEvent(new Event('click'));
-      assertEquals(taskItem.classList.contains('completed'), false, 'Test toggleTask pour démarquer');
-    }
-
-    // Tests pour deleteTask
-    function testDeleteTask() {
-      // Ajouter une tâche pour le test
-      addTask('Faire les courses');
-      let taskList = document.getElementById('task-list');
-      let taskItem = taskList.lastElementChild;
-
-      // Nombre de tâches avant suppression
-      let n = taskList.children.length;
-
-      // Simuler un clic sur le bouton de suppression
-      taskItem.querySelector('.delete-button').dispatchEvent(new Event('click'));
-      let n2 = taskList.children.length;
-      // Vérifier que la tâche a été supprimée
-      assertEquals(n-1, n2, 'Vérifier que la tâche a été supprimée');
+      // Vérifier que l'employé a été ajouté dans la liste HTML
+      const employesList = document.getElementById('liste-employes');
+      const lastItem = employesList.lastElementChild;
+      assertEquals(lastItem.textContent, '4 - Lili - Développeur', 'Vérifier l\'affichage de l\'employé ajouté');
     }
 
     // Exécution des tests
     function runTests() {
-      testAddTask();
-      testToggleTask();
-      testDeleteTask();
+      testAjouterEmploye();
+      testAjouterEmployeManuel();
     }
 
+    // Exécuter les tests à l'ouverture
     runTests();
   </script>
 </body>
