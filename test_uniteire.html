@@ -7,13 +7,12 @@
 <body>
   <h1>Résultats des Tests Unitaires :</h1>
   <pre id="test-results"></pre>
-
-  <input type="text" id="ajout-nom" placeholder="Nom">
-  <input type="text" id="ajout-poste" placeholder="Poste">
-  <button onclick="ajouterEmployeManuel()">Ajouter</button>
-
+  <form id="task-form" style="display:none;">
+    <input type="text" id="ajout-nom" placeholder="Nom">
+    <input type="text" id="ajout-poste" placeholder="Poste">
+    <button id="ajouter" onclick="ajouterEmployeManuel()">Ajouter</button>
+  </form>
   <ul id="liste-employes" style="display:none;"></ul>
-
   <script src="app.js"></script>
 
   <script>
@@ -26,65 +25,48 @@
         results.textContent += `❌ ${testName} : Échoué\n   Attendu : ${JSON.stringify(expected)}\n   Obtenu : ${JSON.stringify(actual)}\n`;
       }
     }
-
-    // Simulation des employés
-    const employes = [
-      { id: 1, nom: "Dupont", poste: "Développeur" },
-      { id: 2, nom: "Durand", poste: "Designer" }
-    ];
-
-    // Fonction pour afficher les employés
-    function afficherEmployes() {
-      const listeDiv = document.getElementById('liste-employes');
-      listeDiv.innerHTML = '';
-      employes.forEach(emp => {
-        const empDiv = document.createElement('li');
-        empDiv.textContent = `${emp.id} - ${emp.nom} - ${emp.poste}`;
-        listeDiv.appendChild(empDiv);
-      });
-      listeDiv.style.display = 'block';
-    }
-
-    // Ajouter un employé
-    function ajouterEmploye(id, nom, poste) {
-      employes.push({ id, nom, poste });
-    }
-
-    // Fonction pour ajouter un employé via l'interface
-    function ajouterEmployeManuel() {
-      const nom = document.getElementById('ajout-nom').value;
-      const poste = document.getElementById('ajout-poste').value;
-      const id = employes.length > 0 ? employes[employes.length - 1].id + 1 : 1;
-      if (nom && poste) {
-        ajouterEmploye(id, nom, poste);
-        afficherEmployes();
-      }
-    }
-
-    // Test unitaire pour ajouter un employé
+    // Test pour ajouter un employé
     function testAjouterEmploye() {
-      ajouterEmploye(4, 'Lili', 'Développeur');
+      // Ajouter un employé à l'aide de la fonction
+      ajouterEmploye(4, "Lili", "Développeur");
+      // Vérifier que l'employé a bien été ajouté
       const lastEmploye = employes[employes.length - 1];
-      assertEquals(lastEmploye, { id: 4, nom: 'Lili', poste: 'Développeur' }, 'Vérifier l\'ajout d\'un employé');
+      assertEquals(lastEmploye,{"id":4,"nom":"Lili","poste":"Développeur"}, "L'employé a été correctement ajouté");
     }
 
-    // Test unitaire pour vérifier l'affichage dans l'interface
+    // Test manuel pour ajouter un employé
     function testAjouterEmployeManuel() {
-      // Simuler l'ajout via l'interface
-      document.getElementById('ajout-nom').value = 'Lili';
-      document.getElementById('ajout-poste').value = 'Développeur';
-      ajouterEmployeManuel();
-
-      // Vérifier que l'employé a été ajouté dans la liste HTML
-      const employesList = document.getElementById('liste-employes');
-      const lastItem = employesList.lastElementChild;
-      assertEquals(lastItem.textContent, '4 - Lili - Développeur', 'Vérifier l\'affichage de l\'employé ajouté');
+      const results = document.getElementById('liste-employes');
+      let length=results.children.length;
+      ajouterEmployeManuel("Didi", "Développeur");
+     const lastEmploye = employes[employes.length - 1];
+      const expectedId = employes.length;
+      assertEquals(lastEmploye, {"id":expectedId,"nom":"Lili","poste":"Développeur"}, "L'employé manuel a été correctement ajouté");
     }
+
+    // Test pour supprimer un employé
+    function testSupprimerEmploye() {
+      const initialLength = employes.length;
+      supprimerEmploye(3); // Supposons que l'ID 3 existe
+      const finalLength = employes.length;
+      assertEquals(finalLength, initialLength - 1, "L'employé a été correctement supprimé");
+    }
+
+    // Test manuel pour supprimer un employé
+    function testSupprimerEmployeManuel() {
+      const id = 2; // Supposons que l'ID 2 existe
+      supprimerEmployeManuel(id);
+      const employeSupp = employes.find(emp => emp.id === id);
+      assertEquals(employeSupp, undefined, "L'employé manuel a été correctement supprimé");
+    }
+
 
     // Exécution des tests
     function runTests() {
       testAjouterEmploye();
       testAjouterEmployeManuel();
+      testSupprimerEmploye();
+      testSupprimerEmployeManuel();
     }
 
     // Exécuter les tests à l'ouverture

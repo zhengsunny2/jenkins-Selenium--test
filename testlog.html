@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestion des Logs</title>
+</head>
+<body>
+  <h1>Gestion des Logs</h1>
+  <button id="click">Click ici</button>
+  <button id="loglist">Afficher les logs</button>
+  <button id="download-logs">Télécharger les logs</button>
+
+  <script>
+    // Tableau pour stocker les logs
+    const logs = [];
+    // Récupérer les boutons
+    const clickButton = document.getElementById('click');
+    const logListButton = document.getElementById('loglist');
+    const downloadLogsButton = document.getElementById('download-logs');
+   // Redéfinir console.log pour ajouter des logs au tableau
+const originalLog = console.log;
+console.log = function(...args) {
+  const message = args.map(arg => (typeof arg === 'object' ? JSON.stringify(arg) : arg)).join(' ');
+  const timestamp = new Date().toISOString();
+  logs.push(`[${timestamp}] ${message}`);
+  originalLog(...args); // Affiche également dans la console
+};
+// Fonction pour ajouter un log sur clic
+clickButton.addEventListener('click', () => {
+      const time = new Date().toISOString();
+      logs.push(`[${time}]: Un clic a été effectué`);
+    });
+// Fonction pour afficher les logs dans une alerte
+logListButton.addEventListener('click', () => {
+        alert(logs.join('\n'));
+    });
+// Fonction pour télécharger les logs
+downloadLogsButton.addEventListener('click', () => {
+  // Vérifier s'il y a des logs a télécharger
+  if (logs.length === 0) {
+        alert("Aucun log à télécharger");
+        return;
+      }
+  // Création d'un fichier Blob
+  const blob = new Blob([logs.join('\n')], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+
+  // Création d'un lien de téléchargement
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'logs.txt';
+  a.click();
+
+  // Libérer l'URL après le téléchargement
+  URL.revokeObjectURL(url);
+    });
+</script>
+</body>
+</html>
