@@ -25,28 +25,32 @@
       }
     }
 
-    // Tests pour addTask
+    function testAjouterEmployeManuel(){
+
+    const nom = document.getElementById('ajout-nom').value;
+    const poste = document.getElementById('ajout-poste').value;
+    const id = employes.length > 0 ? employes[employes.length - 1].id + 1 : 1;
+    if (nom && poste) {
+        ajouterEmploye(id, nom, poste);
+        afficherEmployes();
+    }
+      let result = ajouterEmploye(4,'Lili','Développeur');
+      assertEquals(result, {id: 4, nom: "Lili", poste: "Développeur"}, 'employe ajouter');
+
+      let listeEmployes = document.getElementById('liste-employes');
+      let lastEmploye= listeEmployes.lastElementChild;
+      assertEquals(astEmploye.textContent.contains({id: 4, nom: "Lili", poste: "Développeur"}), true, 'Vérifier que employe est ajoutée');
+    }
+
+
+
     function testAjouterEmploye() {
-      // Cas normal
-      let result = ajouterEmploye('4 - Lili - Développeur');
-      assertEquals(result, true, 'Test addTask avec une chaîne valide');
 
-      // Vérifier que la tâche est ajoutée
-      let taskList = document.getElementById('task-list');
-      let lastTask = taskList.lastElementChild;
-      assertEquals(lastTask.textContent.includes('Faire les courses'), true, 'Vérifier que la tâche est ajoutée');
-
-      // Cas chaîne vide
-      let result2 = addTask(null);
-      assertEquals(result2, false, 'Test addTask avec une chaîne vide');
-      // Vérifier que la tâche n'est pas ajoutée
-      assertEquals(taskList.children.length, 1, 'Vérifier qu\'aucune tâche n\'est ajoutée');
-
-      // Cas type invalide
-      let result3 = addTask(7);
-      assertEquals(result3, false, 'Test addTask avec un type invalide');
-      // Vérifier que la tâche n'est pas ajoutée
-      assertEquals(taskList.children.length, 1, 'Vérifier qu\'aucune tâche n\'est ajoutée');
+      let result = ajouterEmploye(4,'Lili','Développeur');
+      assertEquals(result, {id: 4, nom: "Lili", poste: "Développeur"}, 'employe ajouter');
+      employeLast=result.forEach(e => {e.id === 4 && e.nom === 'Lili' && e.poste === 'Développeur'
+});
+      assertEquals(employeLast, true, 'Vérifier que employe est ajoutée');
     }
 
     // Tests pour toggleTask
